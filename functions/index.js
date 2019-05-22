@@ -37,21 +37,21 @@ app.intent('welcome', (conv) => {
       permissions: 'NAME',
     }));
   } else {
-    conv.ask(' Hi again, ${name}. Would you like to hear the rules before starting?');
-    conv.ask(new ImmersiveResponse({
-    	url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
-  	}));
+    conv.ask(` Hi again, ${name}. Would you like to hear the rules before starting?`);
   }
+  conv.ask(new ImmersiveResponse({
+    url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
+  }));
 });
 
 // Handle the Dialogflow intent to retrieve user permission for their name
 app.intent('actions_intent_PERMISSION', (conv, params, permissionGranted) => {
   if (!permissionGranted) {
-    conv.ask('Ok, no worries. Which town would you like?');
+    conv.ask(`Ok, no worries. Which town would you like?`);
     conv.ask(new Suggestions('Yes', 'No'));
   } else {
     conv.user.storage.userName = conv.user.name.display;
-    conv.ask('Thanks, ${conv.user.storage.userName}. Would you like to hear the rules before starting?');
+    conv.ask(`Thanks, ${conv.user.storage.userName}. Would you like to hear the rules before starting?`);
     conv.ask(new Suggestions('Yes', 'No'));
   }
 });
@@ -73,6 +73,11 @@ app.intent('instructions', (conv) => {
 
 // Function handling instruction conversation
 const instructionsConv = (conv) => {
+	conv.ask(new ImmersiveResponse({
+      state: {
+        instructions: true,
+      },
+    }));
 	conv.close('You are the new mayor of a town for the next 10 years. Your goal is to survive and prosper. ' +
   		'Each turn you can buy or sell acres of land, feed people using your bushels, ' +
   		'and plant a number of seeds on your land to grow bushels.' +

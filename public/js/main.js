@@ -24,6 +24,7 @@ const callbacks = {
     console.log('onUpdate', JSON.stringify(state));
     if ('instructions' in state) {
       //TODO: show instructions state
+      console.log('onUpdate', JSON.stringify(state))
     }
   },
 };
