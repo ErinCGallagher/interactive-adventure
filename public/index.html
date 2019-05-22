@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Immersive Canvas Sample</title>
+    <!-- Disable favicon requests -->
+    <link rel="shortcut icon" type="image/x-icon" href="data:image/x-icon;,">
+    <!-- Load Assistant Canvas CSS and JavaScript -->
+    <link rel="stylesheet" href="https://www.gstatic.com/assistant/immersivecanvas/css/styles.css">
+    <script src="https://www.gstatic.com/assistant/immersivecanvas/js/immersive_canvas_api.js"></script>
+
+    <!-- Load Stats.js for fps monitoring -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+
+    <!-- Load custom CSS -->
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body>
+    <div> Immersive Canvas Sample </div>
+    <div id="view" class="view">
+      <div class="debug">
+        <div class="stats"></div>
+        <div class="logs"></div>
+      </div>
+    </div>
+    <!-- Load custom JavaScript after elements are on page -->
+    <script src="js/main.js"></script>
+    <script src="js/log.js"></script>
+  </body>
+</html>

@@ -13,16 +13,71 @@
 
 'use strict';
 
-const {dialogflow} = require('actions-on-google');
 const functions = require('firebase-functions');
+
+const {
+  dialogflow,
+  ImmersiveResponse,
+  Permission,
+  Suggestions,
+} = require('actions-on-google');
+
+const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
 
 const app = dialogflow({debug: true});
 
-app.intent('Default Welcome Intent', (conv) => {
-  conv.close('Hello, World!');
-  // Complete your fulfillment logic and
-  // send a response when the function is done executing
+// Handle the Dialogflow intent for the fedault welcome.
+// if the name exists do not ask for the permission
+app.intent('welcome', (conv) => {
+  const name = conv.user.storage.userName;
+  if (!name) {
+    // Asks the user's permission to know their name, for personalization.
+    conv.ask(new Permission({
+      context: 'Let\'s play interactive adventure! To get to know you better',
+      permissions: 'NAME',
+    }));
+  } else {
+    conv.ask(' Hi again, ${name}. Would you like to hear the rules before starting?');
+    conv.ask(new ImmersiveResponse({
+    	url: `https://${firebaseConfig.projectId}.firebaseapp.com`,
+  	}));
+  }
 });
+
+// Handle the Dialogflow intent to retrieve user permission for their name
+app.intent('actions_intent_PERMISSION', (conv, params, permissionGranted) => {
+  if (!permissionGranted) {
+    conv.ask('Ok, no worries. Which town would you like?');
+    conv.ask(new Suggestions('Yes', 'No'));
+  } else {
+    conv.user.storage.userName = conv.user.name.display;
+    conv.ask('Thanks, ${conv.user.storage.userName}. Would you like to hear the rules before starting?');
+    conv.ask(new Suggestions('Yes', 'No'));
+  }
+});
+
+// Handle welcome follow up intent and trigger instructions
+app.intent('welcome - yes', (conv) => {
+  instructionsConv(conv);
+});
+
+// Handle welcome follow up intent and trigger game start
+app.intent('welcome - no', (conv) => {
+  conv.close('Okay, let\'s start playing!');
+});
+
+// Handle the Dialogflow intent to 
+app.intent('instructions', (conv) => {
+  instructionsConv(conv);
+});
+
+// Function handling instruction conversation
+const instructionsConv = (conv) => {
+	conv.close('You are the new mayor of a town for the next 10 years. Your goal is to survive and prosper. ' +
+  		'Each turn you can buy or sell acres of land, feed people using your bushels, ' +
+  		'and plant a number of seeds on your land to grow bushels.' +
+  		' Let\'s start playing!');
+}
 
 exports.yourAction = functions.https.onRequest(app);
 
